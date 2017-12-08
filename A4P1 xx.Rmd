@@ -633,6 +633,7 @@ summary(m_ENTR_resp)
 m_ENTR_HR=lmer(ENTR ~ Condition + (1|Study) + (1+Trial|Group) , Finaldata_HR)
 summary(m_ENTR_HR)
 
+## USed code: options(scipen=3), to get fewer decimals instead of scientific notation
 summary(m_RR_HR)
 summary(m_L_HR)
 summary(m_ENTR_HR)
