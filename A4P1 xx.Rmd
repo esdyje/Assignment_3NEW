@@ -609,29 +609,53 @@ summary(m6)
 - make a (probably underpowered) mixed model testing effects of the different conditions on heart rate and respiration coordination
 - N.B: would it make sense to include surrogate pairs? and if so how? what would that tell you?
 ```{r}
-Final_data2x=read.csv("Final_data2.csv")
+crqa_resultsX=read.csv("crqa_results.csv")
+#Final_data2x=read.csv("Final_data2.csv")
+## To subset data into heart rate and respiration data
+#Finaldata_Resp=subset(Final_data2x[Final_data2x$type == "Resp",])
+#Finaldata_HR=subset(Final_data2x[Final_data2x$type == "HR",])
+
+# To get column with study number
+for (file in 1:nrow(crqa_resultsX)){
+  if (grepl("Study1", crqa_resultsX$filename[file])){
+    crqa_resultsX$Study[file] = 1}
+  if (grepl("Study2", crqa_resultsX$filename[file])){
+    crqa_resultsX$Study[file] = 2}
+}
+
+# To get group number
+crqa_resultsX$Group=regmatches(crqa_resultsX$filename, regexpr("[G].*[0-9]", crqa_resultsX$filename))
+
+crqa_resultsX$Group = gsub("[G, _, T]", "", crqa_resultsX$Group)
+
+crqa_resultsX$Group=substr(crqa_resultsX$Group, 1, nchar(crqa_resultsX$Group)-1)
+
+# To get trial number
+crqa_resultsX$Trial=regmatches(crqa_resultsX$filename, regexpr("[T].*[0-9]", crqa_resultsX$filename))
+
+crqa_resultsX$Trial = gsub("[T]", "", crqa_resultsX$Trial)
+
+# To get condition
+crqa_resultsX$filename=as.character(crqa_resultsX$filename)
+crqa_resultsX = crqa_resultsX %>% group_by(filename) %>% mutate(Condition = gsub('.{4}$', '', strsplit(filename, "_")[[1]][4]))
+
 # To subset data into heart rate and respiration data
-Finaldata_Resp=subset(Final_data2x[Final_data2x$type == "Resp",])
-Finaldata_HR=subset(Final_data2x[Final_data2x$type == "HR",])
+CRQAresultsX_Resp=subset(crqa_resultsX[crqa_resultsX$type == "Resp",])
+CRQAresultsX_HR=subset(crqa_resultsX[crqa_resultsX$type == "HR",])
 
+library(lmerTest)
 # To statistically investigate the relationship between condition and CRQA parameters
-m_RR_resp=lmer(RR ~ Condition + (1|Study) + (1+Trial|Group) , Finaldata_Resp)
-summary(m_RR_resp)
+m_RR_resp=lmer(RR ~ Condition + (1|Study) + (1|Group) , CRQAresultsX_Resp)
 
-m_RR_HR=lmer(RR ~ Condition + (1|Study) + (1+Trial|Group) , Finaldata_HR)
-summary(m_RR_HR)
+m_RR_HR=lmer(RR ~ Condition + (1|Study) + (1|Group) , CRQAresultsX_HR)
 
-m_L_resp=lmer(L ~ Condition + (1|Study) + (1+Trial|Group) , Finaldata_Resp)
-summary(m_L_resp)
+m_L_resp=lmer(L ~ Condition + (1|Study) + (1|Group) , CRQAresultsX_Resp)
 
-m_L_HR=lmer(L ~ Condition + (1|Study) + (1+Trial|Group) , Finaldata_HR)
-summary(m_L_HR)
+m_L_HR=lmer(L ~ Condition + (1|Study) + (1|Group) , CRQAresultsX_HR)
 
-m_ENTR_resp=lmer(ENTR ~ Condition + (1|Study) + (1+Trial|Group) , Finaldata_Resp)
-summary(m_ENTR_resp)
+m_ENTR_resp=lmer(ENTR ~ Condition + (1|Study) + (1|Group) , CRQAresultsX_Resp)
 
-m_ENTR_HR=lmer(ENTR ~ Condition + (1|Study) + (1+Trial|Group) , Finaldata_HR)
-summary(m_ENTR_HR)
+m_ENTR_HR=lmer(ENTR ~ Condition + (1|Study) + (1|Group) , CRQAresultsX_HR)
 
 ## USed code: options(scipen=3), to get fewer decimals instead of scientific notation
 summary(m_RR_HR)
@@ -641,6 +665,11 @@ summary(m_ENTR_HR)
 summary(m_RR_resp)
 summary(m_L_resp)
 summary(m_ENTR_resp)
+
+55 pita 
+74 brunch 
+
+
 
 ```
  
