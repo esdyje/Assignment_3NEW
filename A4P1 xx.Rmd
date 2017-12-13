@@ -666,11 +666,6 @@ summary(m_RR_resp)
 summary(m_L_resp)
 summary(m_ENTR_resp)
 
-55 pita 
-74 brunch 
-
-
-
 ```
  
 ### Effects of respiration coordination on heart rate coordination
